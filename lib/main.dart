@@ -5,6 +5,15 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
+import 'dart:ui';
+
+// Theme/brand colors
+const kBrandGreen = Color(0xFF27472F);
+const kBrandYellow = Color(0xFFF8DE40);
+const kBrandBlue = Color(0xFF284C59);
+const kBrandHomeBackground = Color(0xFF343539); // New background color for WelcomeScreen
+const kBottomBarBackground = Color(0xFF22495A); // bottom bar background
+const kBottomBarActive = Color(0xFFCBF201); // active icon/label
 
 void main() {
   runApp(const TMPApp());
@@ -64,7 +73,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _navigateToMainApp() {
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const WebViewScreen()),
+      MaterialPageRoute(builder: (context) => const WebViewScreen(initialIndex: 0)),
     );
   }
 
@@ -102,6 +111,206 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 }
 
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: kBrandHomeBackground,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.black,
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/logo.JPG',
+              width: 44,
+              height: 44,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  SizedBox(height: 6),
+                  Text(
+                    'Digital CO-HOST App For Vacation',
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 16, height: 1),
+                  ),
+                  Text(
+                    'Rentals Globally',
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 16, height: 1),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 26.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 36),
+              const Text(
+                'EXPLORE AS',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 36,
+                ),
+              ),
+              const SizedBox(height: 36),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.vpn_key, color: Colors.white, size: 32),
+                label: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Text(
+                    'GUEST or HOST',
+                    style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22,
+                    ),
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: kBrandBlue,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 1,
+                ),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => WebViewScreen(initialIndex: 1),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.menu_book_rounded, color: Colors.black, size: 32),
+                label: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Text(
+                    'GET LISTED',
+                    style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold, fontSize: 22,
+                    ),
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: kBrandYellow,
+                  foregroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 1,
+                ),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => WebViewScreen(initialIndex: 2),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 36),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: CustomBottomBar(
+        currentIndex: 0, // Home is selected
+        onTap: (int idx) {
+          if (idx == 1) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => WebViewScreen(initialIndex: 1),
+              ),
+            );
+          } else if (idx == 2) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => WebViewScreen(initialIndex: 2),
+              ),
+            );
+          }
+          // If idx == 0, do nothing (already home)
+        },
+        showSelection: false,
+        isHome: true,
+      ),
+    );
+  }
+}
+
+class CustomBottomBar extends StatelessWidget {
+  final int? currentIndex;
+  final bool showSelection;
+  final void Function(int) onTap;
+  final bool isHome;
+  const CustomBottomBar({
+    Key? key,
+    required this.currentIndex,
+    required this.onTap,
+    this.showSelection = true,
+    this.isHome = false,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.group),
+          label: 'Host',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.add_business),
+          label: 'Get Listed',
+        ),
+      ],
+      currentIndex: currentIndex ?? 0,
+      selectedItemColor: Colors.white, // selected icon/label is now white
+      unselectedItemColor: kBottomBarActive, // unselected icons/labels are greenish
+      backgroundColor: kBottomBarBackground,
+      showUnselectedLabels: true,
+      type: BottomNavigationBarType.fixed,
+      onTap: (idx) {
+        if (idx == 0) {
+          if (!isHome) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const WelcomeScreen()),
+              (route) => false,
+            );
+          }
+        } else {
+          onTap(idx);
+        }
+      },
+      selectedFontSize: 14,
+      unselectedFontSize: 14,
+      selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+      elevation: 1,
+      selectedIconTheme: const IconThemeData(size: 30, color: Colors.white),
+      unselectedIconTheme: const IconThemeData(size: 24, color: kBottomBarActive),
+    );
+  }
+}
+
 class TMPApp extends StatelessWidget {
   const TMPApp({super.key});
 
@@ -112,6 +321,7 @@ class TMPApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        scaffoldBackgroundColor: kBrandHomeBackground,
       ),
       home: const SplashScreen(),
       debugShowCheckedModeBanner: false,
@@ -120,7 +330,8 @@ class TMPApp extends StatelessWidget {
 }
 
 class WebViewScreen extends StatefulWidget {
-  const WebViewScreen({super.key});
+  final int initialIndex;
+  const WebViewScreen({super.key, this.initialIndex = 0});
 
   @override
   State<WebViewScreen> createState() => _WebViewScreenState();
@@ -132,10 +343,20 @@ class _WebViewScreenState extends State<WebViewScreen> {
   bool _hasError = false;
   String _errorMessage = '';
   String _currentUrl = 'https://www.ttvsa.com'; // Default URL
+  late int _selectedIndex;
+  // Update the nav urls:
+  static const List<String> _navUrls = [
+    'https://www.ttvsa.com/',
+    'https://www.ttvsa.com/guestlogin',
+    'https://www.ttvsa.com/host',
+  ];
 
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.initialIndex;
+    _currentUrl = _navUrls[_selectedIndex]; // Ensure _currentUrl is set early
+    print('[WebView] Initial URL (from initState): $_currentUrl');
     _initializeWebView();
     _checkPermissions();
     _loadSavedUrl();
@@ -154,9 +375,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
     final WebViewController controller = WebViewController.fromPlatformCreationParams(params);
 
+    print('[WebView] Loading URL: $_currentUrl');
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setUserAgent('Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36')
+      //..setUserAgent('Mozilla/5.0 (Linux; Android 13; Mobile; rv:109.0) Gecko/20100101 Firefox/117.0 Chrome/117.0.0.0 Mobile Safari/537.36') // commented for test
       ..enableZoom(true)
       ..setBackgroundColor(Colors.white)
       ..setNavigationDelegate(
@@ -243,7 +465,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
             }
             
             // Handle other external links (social media, etc.)
-            if (request.url.startsWith('http') && 
+            if (request.url.startsWith('https') && 
                 !request.url.contains('ttvsa.com')) {
               _launchExternalUrl(request.url);
               return NavigationDecision.prevent;
@@ -350,9 +572,33 @@ class _WebViewScreenState extends State<WebViewScreen> {
     }
   }
 
+  void _onBottomNavTapped(int index) {
+    if (index == 0) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const WelcomeScreen()),
+        (route) => false,
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+        _currentUrl = _navUrls[index];
+        _controller.loadRequest(Uri.parse(_currentUrl));
+      });
+    }
+  }
 
   void _reload() {
     _controller.reload();
+  }
+
+  Future<void> _pullToRefresh() async {
+    _controller.reload();
+    // Optionally, wait until loading completes before finishing refresh visually
+    while (_isLoading) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      // It will finish once _isLoading is false.
+    }
   }
 
   @override
@@ -390,7 +636,18 @@ class _WebViewScreenState extends State<WebViewScreen> {
               )
             : Stack(
                 children: [
-                  WebViewWidget(controller: _controller),
+                  RefreshIndicator(
+                    onRefresh: _pullToRefresh,
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height,
+                          child: WebViewWidget(controller: _controller),
+                        ),
+                      ],
+                    ),
+                  ),
                   if (_isLoading)
                     const Positioned(
                       top: 20,
@@ -399,6 +656,12 @@ class _WebViewScreenState extends State<WebViewScreen> {
                     ),
                 ],
               ),
+      ),
+      bottomNavigationBar: CustomBottomBar(
+        currentIndex: _selectedIndex,
+        onTap: _onBottomNavTapped,
+        showSelection: true,
+        isHome: false,
       ),
     );
   }
