@@ -73,7 +73,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _navigateToMainApp() {
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const WebViewScreen(initialIndex: 0)),
+      MaterialPageRoute(builder: (context) => const WelcomeScreen()),
     );
   }
 
@@ -121,6 +121,7 @@ class WelcomeScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.black,
+        toolbarHeight: kToolbarHeight * 1.5, // Increase app bar height by 50%
         title: Row(
           children: [
             Image.asset(
@@ -133,15 +134,15 @@ class WelcomeScreen extends StatelessWidget {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  SizedBox(height: 6),
+                children: [
+                  const SizedBox(height: 6),
                   Text(
                     'Digital CO-HOST App For Vacation',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 16, height: 1),
+                    style: TextStyle(color: Color(0xFFFAE728), fontWeight: FontWeight.w400, fontSize: 16, height: 1), // Change text color to #FAE728
                   ),
                   Text(
                     'Rentals Globally',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 16, height: 1),
+                    style: TextStyle(color: Color(0xFFFAE728), fontWeight: FontWeight.w400, fontSize: 16, height: 1), // Change text color to #FAE728
                   ),
                 ],
               ),
@@ -274,11 +275,11 @@ class CustomBottomBar extends StatelessWidget {
           label: 'Home',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.group),
-          label: 'Host',
+          icon: Icon(Icons.vpn_key), // Changed icon to vpn_key
+          label: 'Guest or Host', // Changed label to "Guest or Host"
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.add_business),
+          icon: Icon(Icons.menu_book_rounded), // Changed icon to menu_book_rounded
           label: 'Get Listed',
         ),
       ],
@@ -378,7 +379,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
     print('[WebView] Loading URL: $_currentUrl');
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      //..setUserAgent('Mozilla/5.0 (Linux; Android 13; Mobile; rv:109.0) Gecko/20100101 Firefox/117.0 Chrome/117.0.0.0 Mobile Safari/537.36') // commented for test
+      ..setUserAgent('Mozilla/5.0 (Linux; Android 13; Mobile; rv:109.0) Gecko/20100101 Firefox/117.0 Chrome/117.0.0.0 Mobile Safari/537.36') // commented for test
       ..enableZoom(true)
       ..setBackgroundColor(Colors.white)
       ..setNavigationDelegate(
