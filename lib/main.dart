@@ -637,17 +637,15 @@ class _WebViewScreenState extends State<WebViewScreen> {
               )
             : Stack(
                 children: [
-                  RefreshIndicator(
-                    onRefresh: _pullToRefresh,
-                    child: ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      children: [
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height,
+                  Column( // This Column ensures Expanded works correctly inside Stack
+                    children: [
+                      Expanded(
+                        child: RefreshIndicator(
+                          onRefresh: _pullToRefresh,
                           child: WebViewWidget(controller: _controller),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   if (_isLoading)
                     const Positioned(
